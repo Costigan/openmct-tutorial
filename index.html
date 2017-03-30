@@ -4,8 +4,8 @@
     <title>Open MCT Tutorials</title>
     <script src="node_modules/openmct/dist/openmct.js"></script>
     <script src="lib/http.js"></script>
-    <script src="dictionary-plugin.js"></script>
-    <script src="historical-telemetry-plugin.js"></script>
+    <script src="warp-dictionary-plugin.js"></script>
+    <script src="warp-history-plugin.js"></script>
 </head>
 <body>
     <script>
@@ -14,9 +14,10 @@
         openmct.install(openmct.plugins.MyItems());
         openmct.install(openmct.plugins.Espresso());
         openmct.install(openmct.plugins.UTCTimeSystem());
+        openmct.install(openmct.plugins.Conductor({showConductor: true}));
 
-        openmct.install(DictionaryPlugin());
-        openmct.install(HistoricalTelemetryPlugin());
+        openmct.install(WarpDictionaryPlugin('session1'));
+        openmct.install(WarpHistoryPlugin('session1'));
         openmct.start();
     </script>
 </body>
