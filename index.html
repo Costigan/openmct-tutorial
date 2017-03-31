@@ -15,6 +15,7 @@
         openmct.install(openmct.plugins.Espresso());
         openmct.install(openmct.plugins.UTCTimeSystem());
         openmct.install(openmct.plugins.Conductor({showConductor: true}));
+        openmct.install(openmct.plugins.AutoflowView());  // {type: "warp_packet"}
 
         openmct.install(WarpDictionaryPlugin('session1'));
         openmct.install(WarpHistoryPlugin('session1'));

@@ -108,7 +108,7 @@ var warpDictionaryObjectProvider = {
             return Promise.resolve({
                 identifier: identifier,
                 name: identifier.key,
-                type: 'folder',
+                type: 'warp_packet',
                 location: 'warp_dictionary:dictionary_root'
             });
         } else {
@@ -142,10 +142,21 @@ var warpDictionaryCompositionProvider = {
         if (domainObject.identifier.key == 'dictionary_root') {
             return getPacketsForSession(defaultSessionName)
                 .then(function(result) {
-                    //console.log('children of '+JSON.stringify(domainObject)+' are\n'+JSON.stringify(result,null,2));                    
                     return result;
                 });
-        } else if (domainObject.identifier.key.indexOf('.') < 0) {
+        } else {
+            return null;
+        }
+    }
+};
+
+var warpPacketcompositionProvider = {
+    appliesTo: function (domainObject) {
+        return domainObject.identifier.namespace === 'warp_dictionary' &&
+               domainObject.type === 'warp_packet';
+    },
+    load: function (domainObject) {
+	if (domainObject.identifier.key.indexOf('.') < 0) {
             return getPointsForPacket(defaultSessionName, domainObject.identifier.key)
                 .then(function(points) {
                     var result = points.map(function(p) {
@@ -155,13 +166,10 @@ var warpDictionaryCompositionProvider = {
                     return result;
                 });
         } else {
-            //console.log('children of '+JSON.stringify(domainObject)+' are []');
-            return Promise.resolve([]);
+            return null;
         }
     }
 };
-
-
 
 function WarpDictionaryPlugin(sessionName) {
     return function install(openmct) {
@@ -175,6 +183,7 @@ function WarpDictionaryPlugin(sessionName) {
 
 //        openmct.composition.addProvider(warpSessionsCompositionProvider);
         openmct.composition.addProvider(warpDictionaryCompositionProvider);
+        openmct.composition.addProvider(warpPacketcompositionProvider);
 
         openmct.types.addType('warp.sessions', {
             name: 'Telemetry Session',
@@ -187,6 +196,21 @@ function WarpDictionaryPlugin(sessionName) {
             description: 'A Telemetry Session Dictionary',
             cssClass: 'icon-telemetry'
         });
+
+//        openmct.types.addType('warp_packet', {
+//            name: 'Warp Telemetry Packet',
+//            description: 'Warp telemetry packet.',
+//            cssClass: 'icon-packet'
+//        });
+
+	openmct.legacyExtension('types', 
+				{
+				    "key": "warp_packet",
+				    "name": "packet",
+				    "cssClass": "icon-packet",
+				    "views": [ "autoflow" ],
+				    "delegates": [ "telemetry" ]
+				});
 
         openmct.types.addType('warp_telemetry', {
             name: 'Warp Telemetry Point',
